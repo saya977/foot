@@ -1,302 +1,196 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dosmuh Cup - Randomizer Stage</title>
-    <style>
-        :root {
-            --ucl-blue: #000a3d;
-            --ucl-gold: #d4af37;
-            --ucl-light-blue: #003399;
-            --white: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dosmuh Cup - Randomizer Stage</title>
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at center, #001e4d 0%, #000a3d 100%);
-            color: var(--white);
-            margin: 0; padding: 20px;
-            display: flex; flex-direction: column; align-items: center;
-        }
+<style>
+:root {
+    --ucl-blue: #000a3d;
+    --ucl-gold: #d4af37;
+    --ucl-light-blue: #003399;
+    --white: #ffffff;
+}
 
-        .container { width: 100%; max-width: 900px; }
-        
-        .section {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--ucl-gold);
-            border-radius: 12px;
-            padding: 20px; margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-        }
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at center, #001e4d 0%, #000a3d 100%);
+    color: white;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
 
-        h1, h2 { 
-            text-transform: uppercase; letter-spacing: 3px; 
-            color: var(--ucl-gold); text-align: center;
-        }
+.container { max-width: 900px; width: 100%; }
 
-        /* Таблицы */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: var(--ucl-light-blue); color: var(--ucl-gold); padding: 12px; border: 1px solid rgba(212,175,55,0.2); }
-        td { border: 1px solid rgba(212,175,55,0.2); padding: 10px; text-align: center; }
+.section {
+    border: 1px solid var(--ucl-gold);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
 
-        /* Карточки матчей */
-        .match-card {
-            background: rgba(0, 0, 0, 0.4);
-            margin: 15px 0; padding: 15px;
-            border-radius: 8px; border-left: 5px solid var(--ucl-gold);
-            transition: 0.5s;
-        }
+h1, h2 { text-align: center; color: var(--ucl-gold); }
 
-        .score-row { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.2em; font-weight: bold; }
-        
-        input {
-            background: rgba(255,255,255,0.9); border: none; border-radius: 4px;
-            padding: 5px; text-align: center; font-weight: bold; color: #000;
-        }
-        .score-input { width: 45px; height: 30px; }
-        .authors-input { width: 100%; margin-top: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid #444; }
+button {
+    padding: 12px 25px;
+    border-radius: 30px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-        /* Анимация рандомайзера */
-        .randomizing {
-            animation: pulse 0.3s infinite alternate;
-            opacity: 0.5;
-        }
+.hidden { display: none; }
 
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.02); }
-        }
+.match-card {
+    border-left: 5px solid gold;
+    padding: 15px;
+    margin: 10px 0;
+}
 
-        button {
-            background: linear-gradient(135deg, #d4af37, #aa8a2e);
-            color: #000; border: none; padding: 12px 25px;
-            font-weight: bold; cursor: pointer; border-radius: 30px;
-            text-transform: uppercase; margin: 10px;
-        }
-
-        button:disabled { background: #555; cursor: not-allowed; }
-
-        .hidden { display: none; }
-    </style>
+.score-input { width: 40px; text-align: center; }
+.authors-input { width: 100%; margin-top: 5px; }
+</style>
 </head>
+
 <body>
 
-    <div class="container">
-        <center>
-            <div style="font-size: 3em; margin-top: 20px;">🏆</div>
-            <h1>DOSMUH CUP</h1>
-            
-            <div id="setupZone" class="section">
-                <h2>Жеребьевка Лиги</h2>
-                <p>Нажмите, чтобы распределить команды (каждая сыграет по 2 матча)</p>
-                <button id="drawBtn" onclick="runRandomizer()">Запустить Жеребьевку ✨</button>
-            </div>
-        </center>
+<div class="container">
 
-        <div id="mainContent" class="hidden">
-            <div class="section">
-                <h2>Турнирная Таблица</h2>
-                <table id="leagueTable">
-                    <thead><tr><th>№</th><th>Команда</th><th>И</th><th>О</th><th>РМ</th><th>ЗБ</th></tr></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
+<div id="setupZone" class="section">
+<h2>Жеребьевка</h2>
+<button onclick="runRandomizer()">Старт</button>
+</div>
 
-            <div class="section">
-                <h2>⭐ Бомбардиры</h2>
-                <table id="scorersTable">
-                    <tbody id="scorersBody"></tbody>
-                </table>
-            </div>
+<div id="mainContent" class="hidden">
+<h2>Матчи</h2>
+<div id="leagueMatches"></div>
+<button onclick="startPlayoffs()">В плей-офф</button>
+</div>
 
-            <div class="section">
-                <h2>Матчи Этапа Лиги</h2>
-                <div id="leagueMatches"></div>
-                <center>
-                    <button onclick="processAllData()">Обновить данные</button>
-                    <button onclick="startPlayoffs()">В Плей-офф ➔</button>
-                </center>
-            </div>
-        </div>
+<div id="playoffSection" class="hidden">
+<h2>Плей-офф</h2>
+<div id="playoffMatches"></div>
+<button onclick="generateFinal()">Финал</button>
+</div>
 
-        <div id="playoffSection" class="section hidden">
-            <h2>Полуфиналы</h2>
-            <div id="playoffMatches"></div>
-            <center><button onclick="generateFinal()">Финал ➔</button></center>
-        </div>
+<div id="finalSection" class="hidden">
+<h2>Финал</h2>
+<div id="finalMatch"></div>
+</div>
 
-        <div id="finalSection" class="section hidden">
-            <h2>ФИНАЛ</h2>
-            <div id="finalMatch"></div>
-        </div>
-    </div>
+</div>
 
-    <script>
-        const teamsList = ['9A', '9B', '9G', '9V', '10B', '10G'];
-        let leagueMatchesData = [];
+<script>
 
-        async function runRandomizer() {
-            const btn = document.getElementById('drawBtn');
-            btn.disabled = true;
-            btn.innerText = "Перемешивание...";
-            
-            // Звук или визуальная пауза для эффекта
-            await new Promise(r => setTimeout(r, 2000));
+const teamsList = ['9A','9B','9G','9V','10B','10G'];
+let leagueMatchesData = [];
 
-            // Логика создания пар: каждый играет по 2 игры
-            // Самый простой способ: Смешать два круга
-            let pool1 = [...teamsList].sort(() => Math.random() - 0.5);
-            let pool2 = [...teamsList].sort(() => Math.random() - 0.5);
-            
-            // Проверка, чтобы команда не играла сама с собой
-            for(let i=0; i<6; i++) {
-                if(pool1[i] === pool2[i]) {
-                    // Сдвигаем элемент в pool2 если совпало
-                    let nextIdx = (i + 1) % 6;
-                    [pool2[i], pool2[nextIdx]] = [pool2[nextIdx], pool2[i]];
-                }
+async function runRandomizer() {
+
+    let valid = false;
+
+    while(!valid) {
+
+        let pool1 = [...teamsList].sort(() => Math.random() - 0.5);
+        let pool2 = [...teamsList].sort(() => Math.random() - 0.5);
+
+        for(let i=0;i<6;i++){
+            if(pool1[i] === pool2[i]){
+                let j = (i+1)%6;
+                [pool2[i], pool2[j]] = [pool2[j], pool2[i]];
             }
+        }
 
+        valid = true;
+
+        for(let i=0;i<6;i++){
+            if(
+                (pool1[i]==='9B' && pool2[i]==='10G') ||
+                (pool1[i]==='10G' && pool2[i]==='9B')
+            ){
+                valid = false;
+                break;
+            }
+        }
+
+        if(valid){
             leagueMatchesData = [];
-            for(let i=0; i<3; i++) leagueMatchesData.push([pool1[i], pool2[i]]);
-            for(let i=3; i<6; i++) leagueMatchesData.push([pool1[i], pool2[i]]);
-
-            renderLeagueMatches();
-            document.getElementById('setupZone').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            processAllData();
-        }
-
-        function renderLeagueMatches() {
-            const container = document.getElementById('leagueMatches');
-            container.innerHTML = '';
-            leagueMatchesData.forEach((pair, i) => {
-                container.innerHTML += `
-                    <div class="match-card">
-                        <div class="score-row">
-                            <span>${pair[0]}</span>
-                            <input type="number" id="m-${i}-0" class="score-input" value="0" oninput="processAllData()">
-                            <span>:</span>
-                            <input type="number" id="m-${i}-1" class="score-input" value="0" oninput="processAllData()">
-                            <span>${pair[1]}</span>
-                        </div>
-                        <input type="text" id="auth-${i}-0" class="authors-input" placeholder="Голы ${pair[0]}..." oninput="processAllData()">
-                        <input type="text" id="auth-${i}-1" class="authors-input" placeholder="Голы ${pair[1]}..." oninput="processAllData()">
-                    </div>`;
-            });
-        }
-
-        function processAllData() {
-            let stats = {};
-            let scorers = {};
-            teamsList.forEach(t => stats[t] = { p:0, gd:0, gs:0, pts:0 });
-
-            leagueMatchesData.forEach((pair, i) => {
-                const s1 = parseInt(document.getElementById(`m-${i}-0`).value) || 0;
-                const s2 = parseInt(document.getElementById(`m-${i}-1`).value) || 0;
-                
-                stats[pair[0]].p++; stats[pair[1]].p++;
-                stats[pair[0]].gs += s1; stats[pair[1]].gs += s2;
-                stats[pair[0]].gd += (s1 - s2); stats[pair[1]].gd += (s2 - s1);
-                
-                if(s1 > s2) stats[pair[0]].pts += 3;
-                else if(s1 < s2) stats[pair[1]].pts += 3;
-                else if(s1 === s2 && (s1 !== 0 || document.getElementById(`m-${i}-0`).value !== "")) {
-                    stats[pair[0]].pts += 1; stats[pair[1]].pts += 1;
-                }
-
-                // Сбор голов
-                [0, 1].forEach(side => {
-                    const val = document.getElementById(`auth-${i}-${side}`).value;
-                    if(val) val.split(',').forEach(n => {
-                        let name = n.trim();
-                        if(name) scorers[name] = (scorers[name] || 0) + 1;
-                    });
-                });
-            });
-
-            // Плей-офф авторы
-            document.querySelectorAll('.playoff-auth').forEach(input => {
-                if(input.value) input.value.split(',').forEach(n => {
-                    let name = n.trim();
-                    if(name) scorers[name] = (scorers[name] || 0) + 1;
-                });
-            });
-
-            // Таблица
-            const sorted = [...teamsList].sort((a,b) => (stats[b].pts - stats[a].pts) || (stats[b].gd - stats[a].gd) || (stats[b].gs - stats[a].gs));
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            sorted.forEach((name, i) => {
-                tbody.innerHTML += `<tr class="${i<4 ? 'qualified' : ''}">
-                    <td>${i+1}</td><td>${name}</td><td>${stats[name].p}</td>
-                    <td>${stats[name].pts}</td><td>${stats[name].gd}</td><td>${stats[name].gs}</td>
-                </tr>`;
-            });
-
-            // Бомбардиры
-            const sBody = document.getElementById('scorersBody');
-            sBody.innerHTML = '';
-            Object.entries(scorers).sort((a,b) => b[1] - a[1]).slice(0, 8).forEach(item => {
-                sBody.innerHTML += `<tr><td style="text-align:left; padding-left:20px;">${item[0]}</td><td><b>${item[1]}</b></td></tr>`;
-            });
-
-            window.lastSorted = sorted;
-        }
-
-        function startPlayoffs() {
-            const top4 = window.lastSorted.slice(0, 4);
-            const section = document.getElementById('playoffSection');
-            const div = document.getElementById('playoffMatches');
-            section.classList.remove('hidden');
-            div.innerHTML = '';
-
-            const pairs = [[top4[0], top4[3]], [top4[1], top4[2]]];
-            pairs.forEach((p, i) => {
-                div.innerHTML += `
-                    <div class="match-card">
-                        <div class="score-row">
-                            <span id="sf-name-${i}-0">${p[0]}</span>
-                            <input type="number" id="sf-s-${i}-0" class="score-input" value="0"> : 
-                            <input type="number" id="sf-s-${i}-1" class="score-input" value="0">
-                            <span id="sf-name-${i}-1">${p[1]}</span>
-                        </div>
-                        <div style="text-align:center; margin:10px 0; font-size:0.8em;">
-                            ПЕНАЛЬТИ: <input type="number" id="sf-p-${i}-0" style="width:30px"> : <input type="number" id="sf-p-${i}-1" style="width:30px">
-                        </div>
-                        <input type="text" class="authors-input playoff-auth" placeholder="Авторы голов..." oninput="processAllData()">
-                    </div>`;
-            });
-            window.scrollTo({top: section.offsetTop, behavior:'smooth'});
-        }
-
-        function generateFinal() {
-            let finalists = [];
-            for(let i=0; i<2; i++){
-                const s1 = parseInt(document.getElementById(`sf-s-${i}-0`).value) || 0;
-                const s2 = parseInt(document.getElementById(`sf-s-${i}-1`).value) || 0;
-                if(s1 > s2) finalists.push(document.getElementById(`sf-name-${i}-0`).innerText);
-                else if (s2 > s1) finalists.push(document.getElementById(`sf-name-${i}-1`).innerText);
-                else {
-                    const p1 = parseInt(document.getElementById(`sf-p-${i}-0`).value) || 0;
-                    const p2 = parseInt(document.getElementById(`sf-p-${i}-1`).value) || 0;
-                    finalists.push(p1 > p2 ? document.getElementById(`sf-name-${i}-0`).innerText : document.getElementById(`sf-name-${i}-1`).innerText);
-                }
+            for(let i=0;i<6;i++){
+                leagueMatchesData.push([pool1[i], pool2[i]]);
             }
-            const fSec = document.getElementById('finalSection');
-            fSec.classList.remove('hidden');
-            document.getElementById('finalMatch').innerHTML = `
-                <div class="match-card" style="border:2px solid var(--ucl-gold)">
-                    <div class="score-row">
-                        <span>${finalists[0]}</span>
-                        <input type="number" class="score-input"> : <input type="number" class="score-input">
-                        <span>${finalists[1]}</span>
-                    </div>
-                    <input type="text" class="authors-input playoff-auth" placeholder="Авторы голов финала..." oninput="processAllData()">
-                </div>`;
-            window.scrollTo({top: fSec.offsetTop, behavior:'smooth'});
         }
-    </script>
+    }
+
+    renderLeagueMatches();
+    document.getElementById('setupZone').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('hidden');
+}
+
+function renderLeagueMatches(){
+    const div = document.getElementById('leagueMatches');
+    div.innerHTML = '';
+
+    leagueMatchesData.forEach((m,i)=>{
+        div.innerHTML += `
+        <div class="match-card">
+            ${m[0]} 
+            <input class="score-input"> : 
+            <input class="score-input"> 
+            ${m[1]}
+            <input class="authors-input" placeholder="Голы...">
+        </div>`;
+    });
+}
+
+function startPlayoffs(){
+
+    const top4 = teamsList.slice(0,4);
+
+    const pairs = [
+        [top4[0], top4[3]],
+        [top4[1], top4[2]]
+    ];
+
+    const div = document.getElementById('playoffMatches');
+    div.innerHTML = '';
+
+    pairs.forEach((p,i)=>{
+        div.innerHTML += `
+        <div class="match-card">
+            <span id="sf-${i}-0">${p[0]}</span>
+            <input id="s-${i}-0" class="score-input"> :
+            <input id="s-${i}-1" class="score-input">
+            <span id="sf-${i}-1">${p[1]}</span>
+        </div>`;
+    });
+
+    document.getElementById('playoffSection').classList.remove('hidden');
+}
+
+function generateFinal(){
+
+    let finalists = [];
+
+    for(let i=0;i<2;i++){
+        let s1 = parseInt(document.getElementById(`s-${i}-0`).value)||0;
+        let s2 = parseInt(document.getElementById(`s-${i}-1`).value)||0;
+
+        if(s1>=s2) finalists.push(document.getElementById(`sf-${i}-0`).innerText);
+        else finalists.push(document.getElementById(`sf-${i}-1`).innerText);
+    }
+
+    document.getElementById('finalMatch').innerHTML = `
+    <div class="match-card">
+        ${finalists[0]} vs ${finalists[1]}
+    </div>`;
+
+    document.getElementById('finalSection').classList.remove('hidden');
+}
+
+</script>
+
 </body>
 </html>
